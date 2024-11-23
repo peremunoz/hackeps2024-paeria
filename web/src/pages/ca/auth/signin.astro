@@ -1,0 +1,225 @@
+---
+import { app } from '../../../firebase/server'
+import { getAuth } from 'firebase-admin/auth'
+import AuthLayout from '../../../layouts/AuthLayout.astro'
+import GoogleButton from '../../../components/ca/GoogleButton.astro'
+
+/* Check if the user is authenticated */
+const auth = getAuth(app)
+if (Astro.cookies.has('__session')) {
+  const sessionCookie = Astro.cookies.get('__session')!.value
+  const decodedCookie = await auth.verifySessionCookie(sessionCookie)
+  if (decodedCookie) {
+    return Astro.redirect('/dashboard')
+  }
+}
+---
+
+<AuthLayout title='Identifica/'t'>
+  <div class='flex min-h-full flex-col justify-center px-6 py-12 lg:px-8'>
+    <div class='sm:mx-auto sm:w-full sm:max-w-sm'>
+      <img
+        class='mx-auto h-10 w-auto'
+        src='/favicon.svg'
+        alt='Holiday Tracker'
+      />
+      <h2
+        class='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'
+      >
+        Entra a Aparca Ya
+      </h2>
+    </div>
+
+    <div class='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
+      <form class='space-y-6' action='/api/auth/signin' method='post'>
+        <div>
+          <label
+            for='email'
+            class='block text-sm font-medium leading-6 text-gray-900'
+            >Correu electrònic</label
+          >
+          <div class='mt-2'>
+            <input
+              id='email'
+              name='email'
+              type='email'
+              autocomplete='email'
+              required
+              class='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+            />
+          </div>
+        </div>
+
+        <div>
+          <div class='flex items-center justify-between'>
+            <label
+              for='password'
+              class='block text-sm font-medium leading-6 text-gray-900'
+              >Contrasenya</label
+            >
+            <div class='text-sm'>
+              <a
+                href='/reset-password'
+                class='font-semibold text-indigo-600 hover:text-indigo-500'
+                >Has oblidat la contrasenya?</a
+              >
+            </div>
+          </div>
+          <div class='mt-2'>
+            <input
+              id='password'
+              name='password'
+              type='password'
+              autocomplete='current-password'
+              required
+              class='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+            />
+          </div>
+        </div>
+
+        <div>
+          <button
+            type='submit'
+            id='submit-button'
+            class='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
+          >
+            <span id='button-text'>Identifica't</span>
+            <svg
+              id='spinner'
+              class='hidden ml-2 w-5 h-5 text-white animate-spin'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+            >
+              <circle
+                class='opacity-25'
+                cx='12'
+                cy='12'
+                r='10'
+                stroke='currentColor'
+                stroke-width='4'></circle>
+              <path
+                class='opacity-75'
+                fill='currentColor'
+                d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z'></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <GoogleButton />
+
+      <p class='mt-10 text-center text-sm text-gray-500'>
+        No estàs registrat?
+        <a
+          href='/signup'
+          class='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
+          >Registra't</a
+        >
+      </p>
+    </div>
+  </div>
+</AuthLayout>
+<script>
+  import {
+    getAuth,
+    inMemoryPersistence,
+    signInWithEmailAndPassword,
+    type UserCredential,
+  } from 'firebase/auth'
+  import { app } from '../../../firebase/client'
+  import { toast } from 'react-toastify'
+
+  const auth = getAuth(app)
+  // This will prevent the browser from storing session data
+  auth.setPersistence(inMemoryPersistence)
+
+  const form = document.querySelector('form') as HTMLFormElement
+  const submitButton = document.getElementById(
+    'submit-button'
+  ) as HTMLButtonElement
+  const buttonText = document.getElementById('button-text')!
+  const spinner = document.getElementById('spinner')!
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData(form)
+    const email = formData.get('email')?.toString()
+    const password = formData.get('password')?.toString()
+
+    if (!email || !password) {
+      return
+    }
+
+    // Show spinner and disable button
+    buttonText.style.display = 'none'
+    spinner.classList.remove('hidden')
+    submitButton.disabled = true
+    submitButton.classList.add('opacity-50', 'cursor-not-allowed')
+
+    let userCredential: UserCredential
+    try {
+      userCredential = await signInWithEmailAndPassword(auth, email, password)
+    } catch (error) {
+      toast.error('Credencials incorrectes', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      })
+      // Hide spinner and enable button if there's an error
+      buttonText.style.display = 'block'
+      spinner.classList.add('hidden')
+      submitButton.disabled = false
+      submitButton.classList.remove('opacity-50', 'cursor-not-allowed')
+      return
+    }
+
+    try {
+      const idToken = await userCredential.user.getIdToken()
+      const response = await fetch('/api/auth/signin', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      })
+
+      if (response.redirected) {
+        toast.success(`Welcome back ${userCredential.user.displayName}`, {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+        })
+        setTimeout(() => {
+          window.location.assign(response.url)
+        }, 1500)
+      }
+    } catch (error) {
+      toast.error('Error, torna a intentar més tard', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+      })
+      // Hide spinner and enable button if there's an error
+      buttonText.style.display = 'block'
+      spinner.classList.add('hidden')
+      submitButton.disabled = false
+      submitButton.classList.remove('opacity-50', 'cursor-not-allowed')
+    }
+  })
+</script>
