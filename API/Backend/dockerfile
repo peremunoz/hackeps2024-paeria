@@ -1,0 +1,17 @@
+# Usar la imagen oficial de Python
+FROM python:3.9
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Copiar el código fuente
+COPY . /app
+
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exponer el puerto
+EXPOSE 8081
+
+# Ejecutar el servidor de FastAPI
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8081"]
