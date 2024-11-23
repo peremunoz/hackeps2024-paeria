@@ -12,4 +12,8 @@ export default defineConfig({
   integrations: [react(), tailwind()],
   output: 'server',
   adapter: vercel(),
+  i18n: {
+    defaultLocale: "es",
+    locales: ["es", "ca"],
+  }
 })
