@@ -12,6 +12,7 @@ class Parking(Base):
     latitude = Column(String)
     longitude = Column(String)
     total_capacity = Column(Integer)
+    occupied_places = Column(Integer)
     gate_mode = Column(String)
     
 class Admins(Base):
@@ -29,3 +30,11 @@ class FollowNotifications(Base):
     __tablename__ = "follow_notifications"
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=str(uuid.uuid4()), server_default="gen_random_uuid()")
     parking_id = Column(UUID(as_uuid=True), ForeignKey("parking.id"))
+    
+class Incidents(Base):
+    __tablename__ = "incidents"
+    user_id = Column(UUID(as_uuid=True), primary_key=True, default=str(uuid.uuid4()), server_default="gen_random_uuid()")
+    parking_id = Column(UUID(as_uuid=True), ForeignKey("parking.id"))
+    name = Column(String)
+    description = Column(String)
+    occupied_places = Column(Integer)

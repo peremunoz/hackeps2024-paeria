@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "admins" (
 );
 
 CREATE TABLE IF NOT EXISTS "movements" (
-  "id" integer PRIMARY KEY,
+  "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   "parking" uuid,
   "datetime" TIMESTAMP,
   "type" varchar
@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS "follow_notifications" (
 
 CREATE TABLE IF NOT EXISTS "incidents" (
   "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  "parking_id" UUID,
   "name" VARCHAR,
   "description" VARCHAR,
   "occuppied_places" INTEGER

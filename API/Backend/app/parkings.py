@@ -46,7 +46,6 @@ def set_sensor(parking_id: str, mode: str, db: Session = Depends(get_db)):
     if not parking:
         raise HTTPException(status_code=404, detail="Parking no encontrado")
     
-    # Actualizar el valor de 'gate_mode'
     parking.gate_mode = mode
     db.commit()  
     db.refresh(parking) 
