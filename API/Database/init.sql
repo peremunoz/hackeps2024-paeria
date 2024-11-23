@@ -27,6 +27,13 @@ CREATE TABLE IF NOT EXISTS "follow_notifications" (
   "parking_id" uuid
 );
 
+CREATE TABLE IF NOT EXISTS "incidents" (
+  "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  "parking_id" UUID,
+  "name" VARCHAR,
+  "description" VARCHAR,
+  "occuppied_places" INTEGER
+);
 
 CREATE TABLE IF NOT EXISTS "incidents" (
   "id" UUID DEFAULT gen_random_uuid() PRIMARY KEY,

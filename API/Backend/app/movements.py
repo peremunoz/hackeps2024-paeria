@@ -14,7 +14,9 @@ class MovementRequest(BaseModel):
     type: str
     
 # Crear una entrada/salida
-@router.post("/movement")
+@router.post("/movement",
+             summary="Registro de una entrada/salida",
+            description="Registra la entrada o la salida de un vehículo en un parking")
 def add_movement(request: MovementRequest, db: Session = Depends(get_db)):
     # Buscar el parking correspondiente
     parking_entry = db.query(Parking).filter(Parking.id == request.parking).first()
