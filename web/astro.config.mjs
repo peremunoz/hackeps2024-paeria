@@ -13,7 +13,7 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   i18n: {
-    defaultLocale: "es",
+    defaultLocale: "ca",
     locales: ["es", "ca"],
   }
 })
