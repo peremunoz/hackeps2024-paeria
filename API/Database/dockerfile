@@ -1,0 +1,15 @@
+FROM postgres:15
+
+#Añadir script init
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Establece variables de entorno necesarias para PostgreSQL
+ENV POSTGRES_USER=admin
+ENV POSTGRES_PASSWORD=admin123
+ENV POSTGRES_DB=mydatabase
+
+# Crea un volumen para la persistencia de datos
+VOLUME ["/var/lib/postgresql/data"]
+
+# Exponer el puerto
+EXPOSE 5432
