@@ -28,6 +28,7 @@ class Movements(Base):
 
 class FollowNotifications(Base):
     __tablename__ = "follow_notifications"
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
     user_id = Column(UUID(as_uuid=True), primary_key=True)
     parking_id = Column(UUID(as_uuid=True), ForeignKey("parking.id"))
     
