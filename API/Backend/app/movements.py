@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from models import Movements, Parking, FollowNotifications
+from models import Movements, Parking, FollowNotifications, History
 from datetime import datetime
 from uuid import UUID
 from . import get_db, send_message
@@ -12,7 +12,8 @@ class MovementRequest(BaseModel):
     parking: UUID
     datetime: datetime
     type: str
-    
+
+
 # Crear una entrada/salida
 @router.post("/movement",
              summary="Registro de una entrada/salida",
@@ -70,3 +71,26 @@ def add_movement(request: MovementRequest, db: Session = Depends(get_db)):
         "movement": new_movement,
         "occupied_places": parking_entry.occupied_places
     }
+
+@router.get("/history",
+            summary="Histórico de Entradas y Salidas",
+            description="Devuelve el histórico de entradas y salidas")
+def get_history(db: Session = Depends(get_db)):
+    """
+    Consulta todos los movimientos de entradas y salidas registrados en la base de datos.
+    """
+    # Consultar todos los movimientos
+    history = db.query(History).all()
+    
+    if not history:
+        raise HTTPException(status_code=404, detail="No hay movimientos registrados")
+    
+    # Formatear los resultados en una lista de diccionarios
+    result = []
+    for log in history:
+        result.append({
+            "datetime": log.datetime,
+            "occupacy": log.occupacy
+        })
+    
+    return result

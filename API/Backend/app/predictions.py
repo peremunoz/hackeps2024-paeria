@@ -1,7 +1,11 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from datetime import datetime
+from sqlalchemy.orm import Session
 import joblib
+from app import get_db
+from app import movements
+from fastapi import Depends
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
@@ -43,23 +47,46 @@ predictor = AfluenciaPredictor('modelo_afluencia.pkl')
 
 # Endpoint para predecir la afluencia entre dos fechas
 @router.post("/predict")
-async def predict_afluencia(request: PredictionRequest):
+async def predict_afluencia(request: PredictionRequest, db: Session = Depends(get_db)):
+    """
+    Predice la afluencia de un parking para un rango de fechas y combina los datos históricos con las predicciones.
+    """
+    # Obtener datos históricos
+    history_data = movements.get_history(db)  # Ahora history_data es solo una lista de diccionarios
+
     # Parsear las fechas de entrada
     start_datetime = datetime.strptime(request.start_datetime, "%Y-%m-%d %H:%M:%S")
     end_datetime = datetime.strptime(request.end_datetime, "%Y-%m-%d %H:%M:%S")
     
-    date_range = pd.date_range(start=start_datetime, end=end_datetime, freq='H')
+    # Crear un rango de fechas basado en el intervalo proporcionado
+    date_range = pd.date_range(start=start_datetime, end=end_datetime, freq="H")
 
-    # Crear DataFrame con las fechas generadas
+    # Crear un DataFrame con las fechas generadas
     input_data = pd.DataFrame(date_range, columns=["datetime"])
 
     # Realizar predicciones usando el modelo
     predictions = predictor.predict(input_data)
 
-    # Crear un mapa con las predicciones usando el datetime como clave
-    prediction_map = {
-        str(input_data["datetime"][i]): predictions[i] for i in range(len(input_data))
-    }
+    # Crear un mapa con los datos históricos y las predicciones combinados
+    result_map = {}
+
+    # Agregar datos históricos al mapa
+    for log in history_data:
+        result_map[str(log["datetime"])] = {
+            "type": "history",
+            "occupacy": log["occupacy"]
+        }
     
-    # Devolver el mapa con las predicciones
-    return prediction_map
+    # Agregar predicciones al mapa (sin sobrescribir los históricos)
+    for i in range(len(input_data)):
+        datetime_str = str(input_data["datetime"][i])
+        if datetime_str not in result_map:  # Evitar sobrescribir datos históricos
+            result_map[datetime_str] = {
+                "type": "prediction",
+                "occupacy": predictions[i]
+            }
+
+    return {
+        "msg": "Predicciones y datos históricos combinados",
+        "data": result_map
+    }
