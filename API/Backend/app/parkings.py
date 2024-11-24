@@ -18,8 +18,28 @@ def get_parkings(db: Session = Depends(get_db)):
             summary="Obtener un parking por su nombre",
             description="Devuelve la información de un parking específico, se puede buscar por su nombre")
 def get_parking(parking_identifier: str, db: Session = Depends(get_db)):
-    # Intentar encontrar el parking por ID
-    parking = db.query(Parking).filter(Parking.name == parking_identifier).first()
+    parking = db.query(Parking).filter(Parking.name.ilike(f"%{parking_identifier}%")).first()
+    
+    # Si no se encuentra el parking, se lanza una excepción
+    if not parking:
+        raise HTTPException(status_code=404, detail="Parking no encontrado")
+    
+    return {
+        "id": parking.id,
+        "name": parking.name,
+        "latitude": parking.latitude,
+        "longitude": parking.longitude,
+        "total_capacity": parking.total_capacity,
+        "occupied_places": parking.occupied_places,
+        "gate_mode": parking.gate_mode
+    }
+
+# Obtener un parking por su nombre
+@router.get("/get_by_id/{parking_id}",
+            summary="Obtener un parking por su nombre",
+            description="Devuelve la información de un parking específico, se puede buscar por su nombre")
+def get_parking(parking_id: str, db: Session = Depends(get_db)):
+    parking = db.query(Parking).filter(Parking.id == parking_id).first()
     
     # Si no se encuentra el parking, se lanza una excepción
     if not parking:

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.users import router as users_router
 from app.parkings import router as parkings_router
 from app.movements import router as movements_router
+from app.predictions import router as predictions_router
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
@@ -34,6 +35,7 @@ app.add_middleware(
 app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(parkings_router, prefix="/parkings", tags=["parkings"])
 app.include_router(movements_router, prefix="/movements", tags=["movements"])
+app.include_router(predictions_router, prefix="/predictions", tags=["predictions"])
 
 # Sesión de la base de datos
 def get_db():
