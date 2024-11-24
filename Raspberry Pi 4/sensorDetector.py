@@ -6,9 +6,11 @@ import json
 
 
 BEAM_PIN = 17
-APIMovement = "https://firm-halibut-funny.ngrok-free.app/movements/movement"
+
+BaseURL = "https://faithful-sloth-socially.ngrok-free.app"
+APIMovement = f"{BaseURL}/movements/movement"
 ParkingId = "217fa335-bcb3-4aca-8f17-c0fc62dcb8fa"
-APIGetStatus = f"https://firm-halibut-funny.ngrok-free.app/parkings/status/{ParkingId}"
+APIGetStatus = f"{BaseURL}/parkings/status/{ParkingId}"
 
 
 def break_beam_callback(channel):

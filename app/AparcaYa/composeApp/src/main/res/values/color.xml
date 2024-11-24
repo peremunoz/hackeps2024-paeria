@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_color">#FF6200EE</color>       <!-- Primary color of your app -->
+    <color name="primary_dark_color">#FF3700B3</color>  <!-- Dark variant of the primary color -->
+    <color name="secondary_color">#03DAC5</color>       <!-- Accent color for buttons, icons, etc. -->
+    <color name="background_color">#FFFFFF</color>       <!-- Default background color -->
+    <color name="surface_color">#FFFFFF</color>          <!-- Surface components (e.g., cards, dialogs) background -->
+    <color name="error_color">#B00020</color>            <!-- Error notifications and alerts -->
+    <color name="on_primary">#FFFFFF</color>             <!-- Text color for primary elements -->
+    <color name="on_surface">#000000</color>            <!-- Text color for surface elements -->
+    <color name="on_error">#FFFFFF</color>              <!-- Text color for error elements -->
+    <color name="divider">#E0E0E0</color>               <!-- Divider lines, borders, etc. -->
+    <color name="text_primary">#000000</color>          <!-- Primary text color -->
+    <color name="text_secondary">#757575</color>        <!-- Secondary text color -->
+    <color name="button_background">#6200EE</color>     <!-- Button background color -->
+    <color name="button_text">#FFFFFF</color>           <!-- Button text color -->
+    <color name="status_bar_color">#6200EE</color>      <!-- Status bar color (matches primary color) -->
+    <color name="navigation_bar_color">#6200EE</color>  <!-- Navigation bar color (matches primary color) -->
+</resources>
