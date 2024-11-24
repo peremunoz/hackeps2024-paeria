@@ -49,7 +49,6 @@ export function Map() {
     }
 
     if (isModalOpen && selectedParking) {
-      return
       // Llamamos a updateParking inmediatamente
       updateParking(selectedParking)
       
@@ -153,7 +152,7 @@ export function Map() {
     // Llamar a fetchParkings cada segundo
     const intervalId = setInterval(() => {
       fetchParkings()
-    }, 10000)
+    }, 1000)
 
     // Limpieza de recursos cuando el componente se desmonte
     return () => {
