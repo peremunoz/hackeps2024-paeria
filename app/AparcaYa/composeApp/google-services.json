@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "490106851491",
+    "project_id": "aparca-ya",
+    "storage_bucket": "aparca-ya.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490106851491:android:26971d02affe1485fa6f16",
+        "android_client_info": {
+          "package_name": "hackeps.aparcaya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "490106851491-nnj77qs91pu36n63mjfckrtj96gqh5qe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqoiVc_fHjGWutc9aUgCSNV0E8fGSWPxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "490106851491-nnj77qs91pu36n63mjfckrtj96gqh5qe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

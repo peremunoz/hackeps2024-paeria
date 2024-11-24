@@ -2,3 +2,7 @@ sqlalchemy
 psycopg2
 fastapi
 uvicorn
+pandas
+joblib
+scikit-learn
+firebase-admin
