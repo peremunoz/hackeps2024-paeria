@@ -1,5 +1,4 @@
 import { LineChart } from '@mui/x-charts'
-import {SparkLineChart} from '@mui/x-charts'
 import { useEffect, useState } from 'react'
 
 const API_URL = 'https://faithful-sloth-socially.ngrok-free.app' // Cambia por la URL de tu API
@@ -71,7 +70,7 @@ export default function Chart() {
   }
 
   return (
-    <SparkLineChart
+    <LineChart
       width={500}
       height={300}
       xAxis={[
