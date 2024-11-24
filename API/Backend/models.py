@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, TIMESTAMP, ForeignKey, text
+from sqlalchemy import Column, String, Integer, TIMESTAMP, ForeignKey, text, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
@@ -25,6 +25,12 @@ class Movements(Base):
     parking = Column(UUID(as_uuid=True), ForeignKey("parking.id"))
     datetime = Column(TIMESTAMP)
     type = Column(String)
+    
+class History(Base):
+    __tablename__ = "history"
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
+    datetime = Column(TIMESTAMP)
+    occupacy = Column(Float)
 
 class FollowNotifications(Base):
     __tablename__ = "follow_notifications"
