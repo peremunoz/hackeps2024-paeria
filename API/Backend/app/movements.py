@@ -51,6 +51,7 @@ def add_movement(request: MovementRequest, db: Session = Depends(get_db)):
         if parking_entry.occupied_places == 0:
             raise HTTPException(status_code=400, detail="No hay vehículos para salir")
         if parking_entry.occupied_places == parking_entry.total_capacity:
+            print("Se va a enviar notificacion", flush=True)
             parking_name = db.query(Parking).filter(Parking.id == request.parking).first()
             parking_name = parking_name.name
             subscriptions = db.query(FollowNotifications).filter(FollowNotifications.parking_id == request.parking).all()
