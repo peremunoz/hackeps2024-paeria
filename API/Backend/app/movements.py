@@ -40,6 +40,7 @@ def add_movement(request: MovementRequest, db: Session = Depends(get_db)):
         if parking_entry.occupied_places == parking_entry.total_capacity -1:
             parking_name = db.query(Parking).filter(Parking.id == request.parking).first()
             parking_name = parking_name.name
+            print(parking_name, True)
             subscriptions = db.query(FollowNotifications).filter(FollowNotifications.parking_id == request.parking).all()
             for suscription in subscriptions:
                 print(suscription.notification_id)
