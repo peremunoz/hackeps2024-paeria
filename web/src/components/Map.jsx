@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import Modal from 'react-modal'
 import { getAuth, onAuthStateChanged } from 'firebase/auth' // Import Firebase authentication
 import Chart from './Chart.jsx'
+import ProgressBar from './ProgressBar.jsx'
 
 export function Map() {
   const API_URL = 'https://faithful-sloth-socially.ngrok-free.app' // Cambia por la URL de tu API
@@ -30,8 +31,7 @@ export function Map() {
 
   // Este useEffect se ejecuta cuando se abre el modal
   useEffect(() => {
-    return
-    let intervalId
+    let intervalId = -1
     const updateParking = (parking) => {
       fetch(`${API_URL}/parkings/get_by_id/${parking.id}`, {
         headers: {
@@ -40,7 +40,8 @@ export function Map() {
       })
         .then((response) => response.json())
         .then((data) => {
-          setSelectedParking(data.parking)
+          setSelectedParking(data)
+          
         })
         .catch((error) => {
           console.error('Error al obtener los detalles del parking:', error)
@@ -50,8 +51,11 @@ export function Map() {
     if (isModalOpen && selectedParking) {
       // Llamamos a updateParking inmediatamente
       updateParking(selectedParking)
+      
+      if (intervalId == -1) {
+        return
+      }
       console.log('Intervalo creado')
-
       // Configuramos el intervalo para actualizar los datos cada segundo
       intervalId = setInterval(() => {
         console.log('Intervalo ejecutado')
@@ -59,7 +63,7 @@ export function Map() {
           console.log('Actualizando parking...')
           updateParking(selectedParking)
         }
-      }, 1000)
+      }, 3000)
     }
 
     // Limpiar el intervalo cuando el modal se cierre
@@ -67,7 +71,7 @@ export function Map() {
       console.log('Intervalo limpiado')
       if (intervalId) clearInterval(intervalId)
     }
-  }, [isModalOpen]) // Ejecuta cuando el modal se abre y cuando el parking seleccionado cambia
+  }, [isModalOpen, selectedParking]) // Ejecuta cuando el modal se abre y cuando el parking seleccionado cambia
 
   useEffect(() => {
     // Configuración de Mapbox con tu clave de API
@@ -184,7 +188,7 @@ export function Map() {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel='Detalls del Parking'
-        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-white rounded-lg shadow-lg w-102 transition-all duration-500 ease-in-out ${
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 bg-white rounded-lg shadow-lg w-[80vw] h-[80vh] transition-all duration-500 ease-in-out ${
           isModalOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
         overlayClassName={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-500 ease-in-out ${
@@ -195,8 +199,9 @@ export function Map() {
           <div>
             <h2 className='text-2xl font-bold mb-4 flex items-center justify-between'>
               <span>Parking {selectedParking.name}</span>
-              {/* Botón de suscripción con campana al lado del texto */}
             </h2>
+
+          <ProgressBar percentage={(selectedParking.total_capacity - selectedParking.occupied_places) / selectedParking.total_capacity * 100} />
 
             <p>
               Places:{' '}
